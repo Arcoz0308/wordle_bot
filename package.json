@@ -1,10 +1,16 @@
 {
 	"name": "template",
 	"scripts": {
-		"dev": "npx nodemon --exec node -r @swc-node/register -r tsconfig-paths/register ./src/index.ts dev",
-		"start": "node -r @swc-node/register -r tsconfig-paths/register ./src/index.ts"
+		"dev": "npx nodemon --exec node -r @swc-node/register -r tsconfig-paths/register --env-file=.env ./src/index.ts dev ",
+		"start": "node -r @swc-node/register -r tsconfig-paths/register --env-file=.env ./src/index.ts",
+		"script": "node -r @swc-node/register -r tsconfig-paths/register --env-file=.env ./script/generate_emojis.ts",
+		"lint": "eslint ./src",
+		"lint:fix": "eslint ./src --fix"
 	},
 	"dependencies": {
+		"canvas": "^2.11.2",
+		"discord.js": "^14.14.1",
+		"specialtonormal": "^1.0.1",
 		"typescript": "^5.4.5"
 	},
 	"devDependencies": {
@@ -12,7 +18,7 @@
 		"@swc-node/core": "^1.13.0",
 		"@swc-node/register": "^1.9.0",
 		"@types/node": "^20.12.7",
-		"eslint": "^9.1.1",
+		"eslint": "^8.57.0",
 		"nodemon": "^3.1.0",
 		"tsconfig-paths": "^4.2.0",
 		"vite-tsconfig-paths": "^4.3.2",

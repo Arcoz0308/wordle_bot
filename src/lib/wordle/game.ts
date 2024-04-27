@@ -1,0 +1,127 @@
+import { Word } from "#/lib/wordle/word";
+import type { Char, Result, RoundInfo, WordCharInfo } from "#/lib/wordle/result";
+import { InvalidWordError } from "#/lib/wordle/error/invalid_word_error";
+import { InvalidWordLengthError } from "#/lib/wordle/error/invalid_word_length_error";
+import { anyToError, validChars } from "#/lib/wordle/util";
+
+export class Game {
+
+  word: Word;
+
+  valid = true;
+
+  error: Error|null = null;
+
+  start: number;
+
+  rounds: RoundInfo[] = [];
+
+  availableChars: Char[] = [...validChars];
+
+  unavailableChars: Char[] = [];
+
+  maxRounds: number;
+
+  constructor(word: string, maxRounds: number = 6) {
+    this.word = new Word(word);
+
+    if (!this.word.valid()) {
+      this.valid = false;
+      this.error = new Error(`invalid word, errors : ${this.word.errors.map((err) => err.message).join("\n")}`);
+    }
+
+    this.start = Date.now();
+    this.maxRounds = maxRounds;
+  }
+
+  round(word: string): Result {
+    try {
+      const guess = new Word(word);
+      if (!guess.valid()) {
+        return {
+          status: "invalid",
+          error: new InvalidWordError(guess.word, guess.errors),
+        };
+      }
+
+      if (!this.word.lengthEqual(guess)) {
+        return {
+          status: "invalid",
+          error: new InvalidWordError(guess.word, [
+            new InvalidWordLengthError(guess.length, this.word.length)]),
+        };
+      }
+
+      const charInfos: WordCharInfo[] = [];
+      for (const [index, guessChar] of guess.characters.entries()) {
+        if (this.word.hasCharacter(guessChar)) {
+          if (this.word.haveCharacterAtPosition(guessChar, index + 1)) {
+            charInfos.push({
+              value: guessChar.saveValue(),
+              position: index + 1,
+              color: "green",
+            });
+            continue;
+          }
+
+          charInfos.push({
+            value: guessChar.saveValue(),
+            position: index + 1,
+            color: "yellow",
+          });
+          continue;
+        }
+
+        charInfos.push({
+          value: guessChar.saveValue(),
+          position: index + 1,
+          color: "grey",
+        });
+
+        if (this.availableChars.includes(guessChar.saveValue())) {
+          this.availableChars = this.availableChars.filter((char) => char !== guessChar.saveValue());
+        }
+
+        if (!this.unavailableChars.includes(guessChar.saveValue())) {
+          this.unavailableChars.push(guessChar.saveValue());
+        }
+
+      }
+
+      this.rounds.push({
+        chars: charInfos,
+      });
+
+      if (this.word.equal(guess)) {
+        return {
+          status: "win",
+          rounds: this.rounds,
+          time: Date.now() - this.start,
+        };
+      }
+
+      if (this.rounds.length >= this.maxRounds) {
+        return {
+          status: "lose",
+          rounds: this.rounds,
+          wordToFind: this.word.word,
+        };
+      }
+
+      return {
+        status: "round",
+        rounds: this.rounds,
+        availableChars: this.availableChars,
+        unavailableChars: this.unavailableChars,
+      };
+
+
+    } catch (e) {
+      return {
+        status: "internalError",
+        message: anyToError(e).message,
+      };
+    }
+  }
+
+}
