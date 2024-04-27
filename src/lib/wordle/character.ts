@@ -9,7 +9,7 @@ export class Character {
   value: string;
 
   constructor(value: string) {
-    this.value = value;
+    this.value = value.toLowerCase();
   }
 
   valid(): boolean {
