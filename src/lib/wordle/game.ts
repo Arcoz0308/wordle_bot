@@ -1,5 +1,5 @@
 import { Word } from "#/lib/wordle/word";
-import type { Char, Result, RoundInfo, WordCharInfo } from "#/lib/wordle/result";
+import type { Char, CharColor, Result, RoundInfo, WordCharInfo } from "#/lib/wordle/result";
 import { InvalidWordError } from "#/lib/wordle/error/invalid_word_error";
 import { InvalidWordLengthError } from "#/lib/wordle/error/invalid_word_length_error";
 import { anyToError, validChars } from "#/lib/wordle/util";
@@ -16,9 +16,7 @@ export class Game {
 
   rounds: RoundInfo[] = [];
 
-  availableChars: Char[] = [...validChars];
-
-  unavailableChars: Char[] = [];
+  chars: Record<Char, CharColor> = Object.fromEntries(validChars.map((char) => [char, "default"])) as Record<Char, CharColor>;
 
   maxRounds: number;
 
@@ -61,6 +59,7 @@ export class Game {
               position: index + 1,
               color: "green",
             });
+            this.chars[guessChar.saveValue()] = "green";
             continue;
           }
 
@@ -69,6 +68,11 @@ export class Game {
             position: index + 1,
             color: "yellow",
           });
+
+          if (this.chars[guessChar.saveValue()] !== "green") {
+            this.chars[guessChar.saveValue()] = "yellow";
+          }
+
           continue;
         }
 
@@ -78,15 +82,11 @@ export class Game {
           color: "grey",
         });
 
-        if (this.availableChars.includes(guessChar.saveValue())) {
-          this.availableChars = this.availableChars.filter((char) => char !== guessChar.saveValue());
-        }
+        this.chars[guessChar.saveValue()] = "grey";
 
-        if (!this.unavailableChars.includes(guessChar.saveValue())) {
-          this.unavailableChars.push(guessChar.saveValue());
-        }
 
       }
+
 
       this.rounds.push({
         chars: charInfos,
@@ -111,8 +111,7 @@ export class Game {
       return {
         status: "round",
         rounds: this.rounds,
-        availableChars: this.availableChars,
-        unavailableChars: this.unavailableChars,
+        chars: this.chars,
       };
 
 

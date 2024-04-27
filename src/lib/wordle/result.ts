@@ -31,8 +31,7 @@ export type RoundInfo = {
 export type Round = {
   status: "round";
   rounds: RoundInfo[];
-  availableChars: Char[];
-  unavailableChars: Char[];
+  chars: Record<Char, CharColor>;
 }
 
 export type Lose = {
