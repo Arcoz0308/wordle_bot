@@ -87,6 +87,19 @@ export class Game {
 
       }
 
+      for (const char of this.word.characters) {
+        const toChecks = [...charInfos.filter((c) => c.value === char.saveValue() && c.color === "yellow")].reverse();
+        for (const toCheck of toChecks) {
+          if (this.word.characterCount(char) < charInfos.filter((c) => c.value === char.saveValue()).length) {
+            charInfos[toCheck.position - 1] = {
+              value: toCheck.value,
+              position: toCheck.position,
+              color: "grey",
+            };
+          }
+        }
+      }
+
 
       this.rounds.push({
         chars: charInfos,
