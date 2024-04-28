@@ -1,5 +1,5 @@
 import { Word } from "#/lib/wordle/word";
-import type { Char, CharColor, Result, RoundInfo, WordCharInfo } from "#/lib/wordle/result";
+import type { Char, CharColor, Result, Round, RoundInfo, WordCharInfo } from "#/lib/wordle/result";
 import { InvalidWordError } from "#/lib/wordle/error/invalid_word_error";
 import { InvalidWordLengthError } from "#/lib/wordle/error/invalid_word_length_error";
 import { anyToError, validChars } from "#/lib/wordle/util";
@@ -36,6 +36,15 @@ export class Game {
 
     this.start = Date.now();
     this.maxRounds = maxRounds;
+  }
+
+  getRoundInfo(): Round {
+    return {
+      status: "round",
+      rounds: this.rounds,
+      chars: this.chars,
+      wordToFind: this.word.word,
+    };
   }
 
   round(word: string): Result {
