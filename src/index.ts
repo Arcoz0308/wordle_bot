@@ -68,6 +68,7 @@ const handleGame = async(message: Message, gameInfos: {channel: string; msg: Mes
           await message.reply("votre mot n'est pas dans la liste des mots autorisés");
           gameInfos.game.resetTimeout();
           gameInfos.game.rounds = gameInfos.game.rounds.slice(0, -1);
+          return;
         }
 
         await gameInfos.msg.edit({ embeds: [generateRoundEmbed(result, 6)] });
