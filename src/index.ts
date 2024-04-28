@@ -38,6 +38,7 @@ const handleGame = async(message: Message, gameInfos: {channel: string; msg: Mes
     const word = message.content.trim();
 
     if (word.toLowerCase() === "stop" || word.toLowerCase() === "!stop") {
+      gameInfos.game.removeTimeout();
       games.delete(message.author.id);
       await message.reply("jeu arreté !");
       await message.react("✅");
