@@ -20,6 +20,12 @@ export class Game {
 
   maxRounds: number;
 
+  _timeout: null|NodeJS.Timeout = null;
+
+  _duration: null|number = null;
+
+  _timeoutCallable: null|((...args: unknown[]) => unknown) = null;
+
   constructor(word: string, maxRounds: number = 6) {
     this.word = new Word(word);
 
@@ -36,6 +42,7 @@ export class Game {
     try {
       const guess = new Word(word);
       if (!guess.valid()) {
+        this.resetTimeout();
         return {
           status: "invalid",
           error: new InvalidWordError(guess.word, guess.errors),
@@ -43,6 +50,7 @@ export class Game {
       }
 
       if (!this.word.lengthEqual(guess)) {
+        this.resetTimeout();
         return {
           status: "invalid",
           error: new InvalidWordError(guess.word, [
@@ -106,6 +114,7 @@ export class Game {
       });
 
       if (this.word.equal(guess)) {
+        this.removeTimeout();
         return {
           status: "win",
           rounds: this.rounds,
@@ -116,6 +125,7 @@ export class Game {
       }
 
       if (this.rounds.length >= this.maxRounds) {
+        this.removeTimeout();
         return {
           status: "lose",
           rounds: this.rounds,
@@ -124,6 +134,7 @@ export class Game {
         };
       }
 
+      this.resetTimeout();
       return {
         status: "round",
         rounds: this.rounds,
@@ -133,10 +144,33 @@ export class Game {
 
 
     } catch (e) {
+      this.resetTimeout();
       return {
         status: "internalError",
         message: anyToError(e).message,
       };
+    }
+  }
+
+  timeout(callable: (...args: unknown[]) => unknown, duration: number): this {
+    this._timeoutCallable = callable;
+    this._duration = duration;
+    this._timeout = setTimeout(callable, duration);
+    return this;
+  }
+
+  resetTimeout(): void {
+    if (this._timeout) {
+      clearTimeout(this._timeout);
+      if (this._timeoutCallable && this._duration !== null) {
+        this._timeout = setTimeout(this._timeoutCallable, this._duration);
+      }
+    }
+  }
+
+  removeTimeout(): void {
+    if (this._timeout) {
+      clearTimeout(this._timeout);
     }
   }
 
