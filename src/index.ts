@@ -1,8 +1,10 @@
 import type { Message } from "discord.js";
 import { Client, IntentsBitField } from "discord.js";
 import { Game } from "#/lib/wordle/game";
-import { randomWord, words } from "#/words";
+import { randomWord } from "#/words";
 import { generateLoseEmbed, generateRoundEmbed, generateTimeoutEmbed, generateWinEmbed } from "#/util";
+import { availableWords } from "../available_words";
+import normalizeSpecialCharacters from "specialtonormal";
 
 const client = new Client({ intents: [
   IntentsBitField.Flags.Guilds,
@@ -64,7 +66,7 @@ const handleGame = async(message: Message, gameInfos: {channel: string; msg: Mes
       }
       case "round": {
 
-        if (!words.includes(word.toLowerCase())) {
+        if (!availableWords.includes(normalizeSpecialCharacters(word.toLowerCase()))) {
           await message.reply("votre mot n'est pas dans la liste des mots autorisés");
           gameInfos.game.resetTimeout();
           gameInfos.game.rounds = gameInfos.game.rounds.slice(0, -1);
