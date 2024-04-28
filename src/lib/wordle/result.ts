@@ -9,6 +9,7 @@ export type Win = {
   rounds: RoundInfo[];
   //in ms
   time: number;
+  chars: Record<Char, CharColor>;
 }
 
 export type InvalidWord = {
@@ -38,6 +39,7 @@ export type Lose = {
   status: "lose";
   rounds: RoundInfo[];
   wordToFind: string;
+  chars: Record<Char, CharColor>;
 }
 
 export type InternalError = {

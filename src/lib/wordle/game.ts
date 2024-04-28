@@ -110,6 +110,7 @@ export class Game {
           status: "win",
           rounds: this.rounds,
           time: Date.now() - this.start,
+          chars: this.chars,
         };
       }
 
@@ -118,6 +119,7 @@ export class Game {
           status: "lose",
           rounds: this.rounds,
           wordToFind: this.word.word,
+          chars: this.chars,
         };
       }
 
