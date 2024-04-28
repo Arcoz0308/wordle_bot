@@ -111,3 +111,5 @@ export const emojis: Record<`${Char}_${CharColor}`, string> = {
   "y_default": "<:_:1233893146329481296>",
   "z_default": "<:_:1233893148007075851>",
 };
+
+export const emptyDefault = "<:_:1234016336326299649>";

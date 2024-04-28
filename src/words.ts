@@ -23,3 +23,7 @@ export const words = [
   "wagon",
   "zebre",
 ];
+
+export const randomWord = (): string => {
+  return words[Math.floor(Math.random() * words.length)];
+};
