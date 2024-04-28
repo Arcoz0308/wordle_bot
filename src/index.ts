@@ -220,7 +220,6 @@ const handleDuoGame = async(message: Message, gameInfos: DuoGame): Promise<void>
       }
       case "invalid": {
         await message.reply("votre mot est invalide, contrôler la longeur et si le mot ne contient aucuns caractères spécieux");
-        gameInfos.user1.nextPlay = !gameInfos.user1.nextPlay;
         break;
       }
       case "win": {
