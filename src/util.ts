@@ -60,5 +60,5 @@ export const generateLoseEmbed = (info: Lose, maxRound: number): EmbedBuilder =>
 export const generateTimeoutEmbed = (info: Round, maxRound: number): EmbedBuilder => {
   return generateBaseEmbed(info, maxRound)
     .setColor("Red")
-    .setDescription("Temps écoulé, le mot à trouvé etais **${info.wordToFind}**");
+    .setDescription(`Temps écoulé, le mot à trouvé etais **${info.wordToFind}**`);
 };

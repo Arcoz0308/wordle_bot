@@ -26,6 +26,7 @@ const startGame = async(message: Message): Promise<void> => {
     game.timeout(async() => {
       games.delete(message.author.id);
       await msg.edit({ embeds: [generateTimeoutEmbed(game.getRoundInfo(), 6)] });
+      await msg.reply("temps écoulé !");
     }, 60 * 1000);
   } catch (e) {
     console.error(e);
