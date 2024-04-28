@@ -24,6 +24,8 @@ const startGame = async(message: Message): Promise<void> => {
     const game = new Game(randomWord());
     const msg = await message.reply({ embeds: [generateRoundEmbed(game.getRoundInfo(), 6)] });
     games.set(message.author.id, { channel: message.channel.id, msg, game });
+    const channelName = message.channel.isDMBased() ? "dm" : message.channel.name;
+    console.log(`"${message.author.username}" start wordle game for word "${game.word.word}2 in channel ${channelName}`);
 
     game.timeout(async() => {
       games.delete(message.author.id);
