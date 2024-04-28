@@ -45,12 +45,6 @@ const handleGame = async(message: Message, gameInfos: {channel: string; msg: Mes
       return;
     }
 
-    if (!words.includes(word.toLowerCase())) {
-      await message.reply("votre mot n'est pas dans la liste des mots autorisés");
-      gameInfos.game.resetTimeout();
-      return;
-    }
-
     const result = gameInfos.game.round(word);
 
     switch (result.status) {
@@ -69,6 +63,13 @@ const handleGame = async(message: Message, gameInfos: {channel: string; msg: Mes
         break;
       }
       case "round": {
+
+        if (!words.includes(word.toLowerCase())) {
+          await message.reply("votre mot n'est pas dans la liste des mots autorisés");
+          gameInfos.game.resetTimeout();
+          gameInfos.game.rounds = gameInfos.game.rounds.slice(0, -1);
+        }
+
         await gameInfos.msg.edit({ embeds: [generateRoundEmbed(result, 6)] });
         await message.react("✖️");
         break;
