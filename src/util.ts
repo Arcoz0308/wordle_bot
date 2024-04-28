@@ -1,6 +1,7 @@
 import type { Char, CharColor, Lose, Round, RoundInfo, Win } from "#/lib/wordle/result";
 import { emojis, emptyDefault } from "#/emojis";
 import { EmbedBuilder } from "discord.js";
+import type { DuoGame } from "#/type";
 
 export const generateRow = (round: RoundInfo): string => {
   return round.chars.map((char) => emojis[`${char.value}_${char.color}`]).join(" ");
@@ -61,4 +62,60 @@ export const generateTimeoutEmbed = (info: Round, maxRound: number): EmbedBuilde
   return generateBaseEmbed(info, maxRound)
     .setColor("Red")
     .setDescription(`Temps écoulé, le mot à trouvé etais **${info.wordToFind}**`);
+};
+
+export const generateRoundDuo = (game: DuoGame|Omit<DuoGame, "msg">, maxRound: number): EmbedBuilder => {
+  const embed = generateRoundEmbed(game.game.getRoundInfo(), maxRound);
+  return embed
+    .setTitle(`${embed.data.title} ${game.user1.name} VS ${game.user2.name}`)
+    .addFields([
+      {
+        name: "tour à :",
+        value: `**${game.user1.nextPlay ? game.user1.name : game.user2.name}**`,
+      },
+    ]);
+};
+
+export const generateWinDuo = (info: Win, game: DuoGame, maxRound: number): EmbedBuilder => {
+  const embed = generateWinEmbed(info, maxRound);
+  return embed
+    .setTitle(`${embed.data.title} ${game.user1.name} VS ${game.user2.name}`)
+    .setDescription(`Bien joué, ${game.user1.nextPlay ? game.user1.name : game.user2.name} a trouvé le mot`
+      + ` **${info.wordToFind}** en ${Math.floor(info.time / 1000)} secondes !`)
+    .addFields([
+      {
+        name: "Gagnant :",
+        value: `**${game.user1.nextPlay ? game.user1.name : game.user2.name}**`,
+      },
+    ]);
+};
+
+export const generateDuoLose = (info: Lose, game: DuoGame, maxRound: number): EmbedBuilder => {
+  const embed = generateLoseEmbed(info, maxRound);
+  return embed
+    .setTitle(`${embed.data.title} ${game.user1.name} VS ${game.user2.name}`)
+    .setDescription(`dommage, vous n'avez pas trouver le mot **${info.wordToFind}**`)
+    .addFields([
+      {
+        name: "Gagnant :",
+        value: "**Aucun !** 🤪",
+      },
+    ]);
+};
+
+export const generateDuoAbandons = (reason: string, userId: string, game: DuoGame, maxRound: number): EmbedBuilder => {
+  const embed = generateBaseEmbed(game.game.getRoundInfo(), maxRound);
+  const looser = userId === game.user1.id ? game.user1 : game.user2;
+  const winner = userId !== game.user1.id ? game.user1 : game.user2;
+  return embed
+    .setTitle(`${embed.data.title} ${game.user1.name} VS ${game.user2.name}`)
+    .setDescription(`abandons de la part de **${looser.name}** pour la raison suivante : ${reason}`
+      + `\nle mot à trouver étais ${game.game.word.word}`)
+    .addFields([
+      {
+        name: "Gagnant :",
+        value: `**${winner.name}** par abandons de l'adversaire !`,
+      },
+    ])
+    .setColor("Red");
 };
