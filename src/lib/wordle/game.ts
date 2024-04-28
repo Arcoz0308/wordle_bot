@@ -111,6 +111,7 @@ export class Game {
           rounds: this.rounds,
           time: Date.now() - this.start,
           chars: this.chars,
+          wordToFind: this.word.word,
         };
       }
 
@@ -127,6 +128,7 @@ export class Game {
         status: "round",
         rounds: this.rounds,
         chars: this.chars,
+        wordToFind: this.word.word,
       };
 
 
