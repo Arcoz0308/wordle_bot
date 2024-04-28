@@ -36,6 +36,14 @@ const startGame = async(message: Message): Promise<void> => {
 const handleGame = async(message: Message, gameInfos: {channel: string; msg: Message; game: Game}): Promise<void> => {
   try {
     const word = message.content.trim();
+
+    if (word.toLowerCase() === "stop") {
+      games.delete(message.author.id);
+      await message.reply("jeu arreté !");
+      await message.react("✅");
+      return;
+    }
+
     const result = gameInfos.game.round(word);
 
     switch (result.status) {
