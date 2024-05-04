@@ -43,7 +43,7 @@ export class Game {
       status: "round",
       rounds: this.rounds,
       chars: this.chars,
-      wordToFind: this.word.word,
+      wordToFind: this.word.value,
     };
   }
 
@@ -54,7 +54,7 @@ export class Game {
         this.resetTimeout();
         return {
           status: "invalid",
-          error: new InvalidWordError(guess.word, guess.errors),
+          error: new InvalidWordError(guess.value, guess.errors),
         };
       }
 
@@ -62,7 +62,7 @@ export class Game {
         this.resetTimeout();
         return {
           status: "invalid",
-          error: new InvalidWordError(guess.word, [
+          error: new InvalidWordError(guess.value, [
             new InvalidWordLengthError(guess.length, this.word.length)]),
         };
       }
@@ -106,8 +106,9 @@ export class Game {
 
       for (const char of this.word.characters) {
         const toChecks = [...charInfos.filter((c) => c.value === char.saveValue() && c.color === "yellow")].reverse();
+        const length = charInfos.filter((c) => c.value === char.saveValue() && c.color === "green").length;
         for (const toCheck of toChecks) {
-          if (this.word.characterCount(char) < charInfos.filter((c) => c.value === char.saveValue()).length) {
+          if (length < charInfos.filter((c) => c.value === char.saveValue()).length) {
             charInfos[toCheck.position - 1] = {
               value: toCheck.value,
               position: toCheck.position,
@@ -129,7 +130,7 @@ export class Game {
           rounds: this.rounds,
           time: Date.now() - this.start,
           chars: this.chars,
-          wordToFind: this.word.word,
+          wordToFind: this.word.value,
         };
       }
 
@@ -138,7 +139,7 @@ export class Game {
         return {
           status: "lose",
           rounds: this.rounds,
-          wordToFind: this.word.word,
+          wordToFind: this.word.value,
           chars: this.chars,
         };
       }
@@ -148,7 +149,7 @@ export class Game {
         status: "round",
         rounds: this.rounds,
         chars: this.chars,
-        wordToFind: this.word.word,
+        wordToFind: this.word.value,
       };
 
 
@@ -160,6 +161,7 @@ export class Game {
       };
     }
   }
+
 
   timeout(callable: (...args: unknown[]) => unknown, duration: number): this {
     this._timeoutCallable = callable;

@@ -4,16 +4,16 @@ import normalizeSpecialCharacters from "specialtonormal";
 
 export class Word {
 
-  word: string;
+  value: string;
 
   characters: Character[];
 
   errors: InvalidCharacterError[] = [];
 
   constructor(word: string) {
-    this.word = normalizeSpecialCharacters(word.toLowerCase());
+    this.value = normalizeSpecialCharacters(word.toLowerCase());
 
-    this.characters = this.word.split("").map((char) => new Character(char));
+    this.characters = this.value.split("").map((char) => new Character(char));
   }
 
   get length(): number {
@@ -33,7 +33,7 @@ export class Word {
   }
 
   equal(world: Word): boolean {
-    return this.word.toLowerCase() === world.word.toLowerCase();
+    return this.value.toLowerCase() === world.value.toLowerCase();
   }
 
   lengthEqual(word: Word): boolean {

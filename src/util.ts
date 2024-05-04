@@ -110,7 +110,7 @@ export const generateDuoAbandons = (reason: string, userId: string, game: DuoGam
   return embed
     .setTitle(`${embed.data.title} ${game.user1.name} VS ${game.user2.name}`)
     .setDescription(`abandons de la part de **${looser.name}** pour la raison suivante : ${reason}`
-      + `\nle mot à trouver étais ${game.game.word.word}`)
+      + `\nle mot à trouver étais ${game.game.word.value}`)
     .addFields([
       {
         name: "Gagnant :",
